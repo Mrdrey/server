@@ -16,6 +16,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+os.environ['TORCH_HOME'] = '/tmp/torch'
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
