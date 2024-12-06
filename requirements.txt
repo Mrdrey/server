@@ -1,0 +1,7 @@
+flask
+flask-cors
+Pillow
+torch
+transformers
+easyocr
+werkzeug
