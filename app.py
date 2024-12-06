@@ -1,13 +1,14 @@
 import os
 import logging
 import io
+import easyocr
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from PIL import Image
-import pickle
 import torch
 from transformers import MarianMTModel, MarianTokenizer
+import pickle
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -24,13 +25,14 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Load pickled EasyOCR reader
-def load_ocr_reader(pickle_path):
+def initialize_ocr_reader():
     try:
-        with open(pickle_path, 'rb') as f:
-            ocr_reader = pickle.load(f)
-        return ocr_reader
+        logger.info("Initializing EasyOCR reader")
+        # Initialize reader with multiple languages 
+        reader = easyocr.Reader(['en', 'es', 'de', 'it', 'tl'])
+        return reader
     except Exception as e:
-        logger.error(f"Failed to load OCR reader from pickle: {e}")
+        logger.error(f"Failed to initialize OCR reader: {e}")
         raise
 
 # Load translation models
@@ -70,7 +72,7 @@ def load_translation_models():
 
 # Global variables
 try:
-    ocr_reader = load_ocr_reader('easyocr_reader.pkl')
+    ocr_reader = initialize_ocr_reader()
     translation_models, translation_tokenizers = load_translation_models()
 except Exception as e:
     logger.critical(f"Startup error: {e}")
